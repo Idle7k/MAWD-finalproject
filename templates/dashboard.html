@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Campus Split{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Overview</h1>
+        <p class="muted">Your campus expenses, all in one place.</p>
+    </div>
+    <div class="actions">
+        <a class="button secondary" href="/vendors">Pay a vendor</a>
+        <a class="button" href="/expenses/new">Split an expense</a>
+    </div>
+</div>
+
+{# The three balances are always shown separately. #}
+<div class="grid three">
+    <div class="card stat green">
+        <p class="label">People owe you</p>
+        <p class="amount">&#8377;{{ people_owe_you|rupees }}</p>
+        <p class="muted small">Peer debts where you paid for someone else.</p>
+        <a href="/balances">View balances</a>
+    </div>
+
+    <div class="card stat red">
+        <p class="label">You owe people</p>
+        <p class="amount">&#8377;{{ you_owe_people|rupees }}</p>
+        <p class="muted small">Peer debts where someone paid for you.</p>
+        <a href="/balances">View balances</a>
+    </div>
+
+    <div class="card stat amber">
+        <p class="label">Vendor payments due</p>
+        <p class="amount">&#8377;{{ vendor_due|rupees }}</p>
+        <p class="muted small">Your unpaid shares, owed directly to vendors.</p>
+        <a href="/balances">View vendor dues</a>
+    </div>
+</div>
+
+<div class="grid two">
+    <div class="card">
+        <div class="card-head">
+            <h2>Recent expenses</h2>
+            <a href="/expenses">See all</a>
+        </div>
+
+        {% if expenses %}
+            <table>
+                <tr>
+                    <th>Expense</th>
+                    <th>Vendor</th>
+                    <th class="right">Total</th>
+                </tr>
+                {% for expense in expenses %}
+                <tr>
+                    <td>
+                        <a href="/expenses/{{ expense['id'] }}">{{ expense["description"] }}</a>
+                    </td>
+                    <td>{{ expense["vendor_name"] }}</td>
+                    <td class="right">
+                        &#8377;{{ expense["total"]|rupees }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="empty">
+                <p>No expenses yet.</p>
+                <a class="button" href="/expenses/new">Split an expense</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-head">
+            <h2>Campus vendors</h2>
+            <a href="/vendors">See all</a>
+        </div>
+
+        {% if vendors %}
+            <ul class="plain-list">
+                {% for vendor in vendors %}
+                <li>
+                    <a href="/vendors/{{ vendor['id'] }}">{{ vendor["name"] }}</a>
+                    <span class="muted small">{{ vendor["category"] }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <p class="muted small">{{ vendor_count }} active campus vendors.</p>
+        {% else %}
+            <p class="muted">No active vendors yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

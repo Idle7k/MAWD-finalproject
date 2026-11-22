@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Create account - Campus Split{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h1>Create account</h1>
+    <p class="muted">New accounts are student accounts.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <div class="card">
+        <form method="POST" action="/register">
+            <label>
+                Username
+                <input type="text" name="username" value="{{ username }}" required>
+            </label>
+
+            <label>
+                Password
+                <input type="password" name="password" required>
+            </label>
+
+            <label>
+                Repeat password
+                <input type="password" name="confirm_password" required>
+            </label>
+
+            <button type="submit">Create account</button>
+        </form>
+    </div>
+
+    <p class="muted center">
+        Already have an account? <a href="/login">Sign in</a>
+    </p>
+</div>
+{% endblock %}

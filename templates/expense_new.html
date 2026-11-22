@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}New expense - Campus Split{% endblock %}
+
+{% block content %}
+<div class="narrow">
+    <h1>Split an expense</h1>
+    <p class="muted">Choose the vendor, the total and who shares it.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/expenses/new" class="card">
+        <label>
+            Vendor
+            <select name="vendor_id" required>
+                {% for vendor in vendors %}
+                    <option value="{{ vendor['id'] }}"
+                        {% if vendor['id'] == selected_vendor %}selected{% endif %}>
+                        {{ vendor["name"] }} - {{ vendor["category"] }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            What was it for?
+            <input type="text" name="description" placeholder="Laundry for the week" required>
+        </label>
+
+        <label>
+            Total amount (in rupees)
+            <input type="text" name="total" placeholder="210" required>
+        </label>
+
+        <fieldset>
+            <legend>How should it be split?</legend>
+            <label class="inline">
+                <input type="radio" name="split_type" value="equal" checked>
+                Equally between everyone chosen
+            </label>
+            <label class="inline">
+                <input type="radio" name="split_type" value="custom">
+                Custom amount per person
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who shares this expense?</legend>
+            <p class="muted small">
+                Tick the students. For a custom split, fill their amount in rupees.
+            </p>
+
+            <table class="tight">
+                <tr>
+                    <th>Share with</th>
+                    <th>Custom amount (optional)</th>
+                </tr>
+                {% for student in students %}
+                <tr>
+                    <td>
+                        <label class="inline">
+                            <input type="checkbox" name="participants" value="{{ student['id'] }}">
+                            {{ student["username"] }}
+                            {% if student["id"] == current_user["id"] %}(you){% endif %}
+                        </label>
+                    </td>
+                    <td>
+                        <input type="text" name="custom_{{ student['id'] }}" placeholder="e.g. 70">
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </fieldset>
+
+        <div class="actions">
+            <button type="submit">Create expense</button>
+            <a class="button secondary" href="/expenses">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

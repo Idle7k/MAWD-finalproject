@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Manage vendors - Campus Split{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Manage vendors</h1>
+        <p class="muted">Only administrators can see this page.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/admin/vendors/new">Add vendor</a>
+    </div>
+</div>
+
+{% if vendors %}
+<div class="card">
+    <table>
+        <tr>
+            <th>Vendor</th>
+            <th>Category</th>
+            <th>UPI ID</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        {% for vendor in vendors %}
+        <tr>
+            <td>{{ vendor["name"] }}</td>
+            <td>{{ vendor["category"] }}</td>
+            <td class="upi">{{ vendor["upi_id"] }}</td>
+            <td>
+                {% if vendor["is_active"] == 1 %}
+                    <span class="badge green">Active</span>
+                {% else %}
+                    <span class="badge grey">Inactive</span>
+                {% endif %}
+            </td>
+            <td>
+                <a class="button small secondary" href="/admin/vendors/{{ vendor['id'] }}/edit">Edit</a>
+
+                <form method="POST" action="/admin/vendors/{{ vendor['id'] }}/toggle" class="inline-form">
+                    {% if vendor["is_active"] == 1 %}
+                        <button type="submit" class="small secondary">Deactivate</button>
+                    {% else %}
+                        <button type="submit" class="small">Activate</button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% else %}
+<div class="card empty">
+    <h2>No vendors yet</h2>
+    <a class="button" href="/admin/vendors/new">Add the first vendor</a>
+</div>
+{% endif %}
+{% endblock %}

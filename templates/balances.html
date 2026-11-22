@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Balances - Campus Split{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Balances</h1>
+        <p class="muted">
+            Vendor dues and peer debts are different things, so they are shown separately.
+        </p>
+    </div>
+</div>
+
+<div class="grid three">
+    <div class="card stat green">
+        <p class="label">People owe you</p>
+        <p class="amount">&#8377;{{ total_receivable|rupees }}</p>
+    </div>
+    <div class="card stat red">
+        <p class="label">You owe people</p>
+        <p class="amount">&#8377;{{ total_payable|rupees }}</p>
+    </div>
+    <div class="card stat amber">
+        <p class="label">You owe vendors</p>
+        <p class="amount">&#8377;{{ vendor_due|rupees }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>You owe people</h2>
+    {% if payable %}
+        <table>
+            <tr>
+                <th>You owe</th>
+                <th class="right">Debt</th>
+                <th class="right">Still to repay</th>
+                <th>Record a repayment</th>
+            </tr>
+            {% for debt in payable %}
+            <tr>
+                <td>{{ debt["other_name"] }}</td>
+                <td class="right">&#8377;{{ debt["amount"]|rupees }}</td>
+                <td class="right">&#8377;{{ debt["outstanding"]|rupees }}</td>
+                <td>
+                    {% if debt["outstanding"] > 0 %}
+                    <form method="POST" action="/debts/{{ debt['id'] }}/settle" class="inline-form">
+                        <input type="text" name="amount" value="{{ debt['outstanding']|rupees }}" size="7">
+                        <button type="submit" class="small">I paid back</button>
+                    </form>
+                    {% else %}
+                        <span class="badge green">Settled</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">You do not owe any student right now.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>People owe you</h2>
+    {% if receivable %}
+        <table>
+            <tr>
+                <th>Student</th>
+                <th class="right">Debt</th>
+                <th class="right">Still owed to you</th>
+            </tr>
+            {% for debt in receivable %}
+            <tr>
+                <td>{{ debt["other_name"] }}</td>
+                <td class="right">&#8377;{{ debt["amount"]|rupees }}</td>
+                <td class="right">&#8377;{{ debt["outstanding"]|rupees }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">Nobody owes you anything right now.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Your unpaid vendor shares</h2>
+    {% if vendor_shares %}
+        <table>
+            <tr>
+                <th>Expense</th>
+                <th>Vendor</th>
+                <th class="right">Unpaid</th>
+                <th></th>
+            </tr>
+            {% for share in vendor_shares %}
+            <tr>
+                <td>{{ share["description"] }}</td>
+                <td>{{ share["vendor_name"] }}</td>
+                <td class="right">
+                    &#8377;{{ (share["amount"] - share["paid"])|rupees }}
+                </td>
+                <td><a href="/expenses/{{ share['expense_id'] }}">Pay</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="muted">All your shares are paid to the vendor.</p>
+    {% endif %}
+</div>
+{% endblock %}

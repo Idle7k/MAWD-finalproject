@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Vendors - Campus Split{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Vendors directory</h1>
+        <p class="muted">Campus vendors you can pay directly with UPI.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/expenses/new">Split an expense</a>
+    </div>
+</div>
+
+<p class="note">
+    Paying a vendor directly clears your own share and creates no peer debt.
+    A peer debt only appears when one student pays for another student's share.
+</p>
+
+{% if vendors %}
+<div class="grid three">
+    {% for vendor in vendors %}
+    <div class="card">
+        <h2>{{ vendor["name"] }}</h2>
+        <p class="muted small">{{ vendor["category"] }}</p>
+        <p>{{ vendor["description"] }}</p>
+        <p class="upi">{{ vendor["upi_id"] }}</p>
+        <div class="actions">
+            <a class="button small secondary" href="/vendors/{{ vendor['id'] }}">Details</a>
+            <a class="button small" href="/expenses/new?vendor_id={{ vendor['id'] }}">Split here</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card empty">
+    <h2>No vendors yet</h2>
+    <p class="muted">Ask an administrator to add campus vendors.</p>
+</div>
+{% endif %}
+{% endblock %}

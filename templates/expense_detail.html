@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}{{ expense["description"] }} - Campus Split{% endblock %}
+
+{% block content %}
+<p><a href="/expenses">&larr; Back to expenses</a></p>
+
+<div class="page-head">
+    <div>
+        <h1>{{ expense["description"] }}</h1>
+        <p class="muted">
+            {{ expense["vendor_name"] }} &middot;
+            created by {{ expense["creator_name"] }} &middot;
+            {{ expense["created_at"][:16] }} &middot;
+            {{ expense["split_type"] }} split
+        </p>
+    </div>
+    <div class="total">
+        <span class="label">Total</span>
+        <span class="amount">&#8377;{{ expense["total"]|rupees }}</span>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Shares</h2>
+    <p class="muted small">
+        Pay your own share with the UPI button. If you pay someone else's share,
+        that person will owe you the money in Balances.
+    </p>
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <th class="right">Share</th>
+            <th class="right">Paid to vendor</th>
+            <th>Status</th>
+            <th>Record a payment</th>
+        </tr>
+        {% for share in shares %}
+        {% set due = share["amount"] - share["paid"] %}
+        <tr>
+            <td>
+                {{ share["username"] }}
+                {% if share["user_id"] == current_user["id"] %}<span class="muted">(you)</span>{% endif %}
+            </td>
+            <td class="right">&#8377;{{ share["amount"]|rupees }}</td>
+            <td class="right">&#8377;{{ share["paid"]|rupees }}</td>
+            <td>
+                {% if due == 0 %}
+                    <span class="badge green">Paid</span>
+                {% elif share["paid"] > 0 %}
+                    <span class="badge amber">Partly paid</span>
+                {% else %}
+                    <span class="badge amber">Unpaid</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if due > 0 %}
+                    <a class="button small secondary" href="{{ upi_base }}&amp;am={{ due|rupees }}">
+                        Pay &#8377;{{ due|rupees }} on UPI
+                    </a>
+
+                    <form method="POST" action="/shares/{{ share['id'] }}/pay" class="inline-form">
+                        <input type="text" name="amount" value="{{ due|rupees }}" size="7">
+                        <button type="submit" class="small">I paid</button>
+                    </form>
+                {% else %}
+                    <span class="muted small">Nothing left to pay</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Peer debts from this expense</h2>
+
+    {% if debts %}
+        <table>
+            <tr>
+                <th>Student</th>
+                <th>Owes</th>
+                <th class="right">Amount</th>
+                <th class="right">Still owed</th>
+            </tr>
+            {% for debt in debts %}
+            <tr>
+                <td>{{ debt["debtor_name"] }}</td>
+                <td>{{ debt["creditor_name"] }}</td>
+                <td class="right">&#8377;{{ debt["amount"]|rupees }}</td>
+                <td class="right">&#8377;{{ debt["outstanding"]|rupees }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p class="muted small">
+            Repayments are recorded from the <a href="/balances">Balances</a> page.
+        </p>
+    {% else %}
+        <p class="muted">
+            No peer debt on this expense. Everyone is paying the vendor directly.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

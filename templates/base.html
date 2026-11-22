@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Campus Split{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+{% if current_user %}
+<header class="topbar">
+    <a class="brand" href="/dashboard">Campus Split</a>
+    <nav class="nav">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/expenses">Expenses</a>
+        <a href="/vendors">Vendors</a>
+        <a href="/balances">Balances</a>
+        {% if current_user["role"] == "admin" %}
+            <a href="/admin/vendors">Admin</a>
+        {% endif %}
+        <span class="who">{{ current_user["username"] }}</span>
+        <a class="logout" href="/logout">Log out</a>
+    </nav>
+</header>
+{% endif %}
+
+<main class="page">
+    {% if request.query_params.get("msg") %}
+        <p class="flash">{{ request.query_params.get("msg") }}</p>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

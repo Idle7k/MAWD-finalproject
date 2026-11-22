@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Vendor form - Campus Split{% endblock %}
+
+{% block content %}
+<div class="narrow">
+    <h1>{{ "Edit vendor" if vendor else "Add vendor" }}</h1>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST"
+          action="/admin/vendors/{{ vendor['id'] ~ '/edit' if vendor else 'new' }}"
+          class="card">
+
+        <label>
+            Name
+            <input type="text" name="name" value="{{ vendor['name'] if vendor else '' }}" required>
+        </label>
+
+        <label>
+            Category
+            <input type="text" name="category" value="{{ vendor['category'] if vendor else '' }}" required>
+        </label>
+
+        <label>
+            UPI ID
+            <input type="text" name="upi_id" value="{{ vendor['upi_id'] if vendor else '' }}"
+                   placeholder="shop@bank" required>
+        </label>
+
+        <label>
+            Description
+            <input type="text" name="description" value="{{ vendor['description'] if vendor else '' }}">
+        </label>
+
+        <label class="inline">
+            <input type="checkbox" name="is_active" value="1"
+                   {% if (vendor and vendor['is_active'] == 1) or not vendor %}checked{% endif %}>
+            Active (students can pay this vendor)
+        </label>
+
+        <div class="actions">
+            <button type="submit">Save vendor</button>
+            <a class="button secondary" href="/admin/vendors">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

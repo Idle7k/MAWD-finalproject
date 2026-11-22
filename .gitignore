@@ -1,0 +1,5 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+campus_split.db

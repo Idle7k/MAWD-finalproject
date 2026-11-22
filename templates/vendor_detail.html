@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ vendor["name"] }} - Campus Split{% endblock %}
+
+{% block content %}
+<p><a href="/vendors">&larr; Back to vendors</a></p>
+
+<div class="card">
+    <div class="page-head">
+        <div>
+            <h1>{{ vendor["name"] }}</h1>
+            <p class="muted">{{ vendor["category"] }}</p>
+        </div>
+        {% if vendor["is_active"] == 1 %}
+            <span class="badge green">Active</span>
+        {% else %}
+            <span class="badge grey">Inactive</span>
+        {% endif %}
+    </div>
+
+    <p>{{ vendor["description"] }}</p>
+    <p class="upi">{{ vendor["upi_id"] }}</p>
+
+    <div class="actions">
+        <a class="button" href="/expenses/new?vendor_id={{ vendor['id'] }}">Split an expense here</a>
+    </div>
+</div>
+{% endblock %}

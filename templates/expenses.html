@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Expenses - Campus Split{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Expenses</h1>
+        <p class="muted">Everything you created or took part in.</p>
+    </div>
+    <div class="actions">
+        <a class="button" href="/expenses/new">Split an expense</a>
+    </div>
+</div>
+
+{% if expenses %}
+<div class="card">
+    <table>
+        <tr>
+            <th>Expense</th>
+            <th>Vendor</th>
+            <th>Paid by</th>
+            <th>Date</th>
+            <th class="right">Total</th>
+        </tr>
+        {% for expense in expenses %}
+        <tr>
+            <td><a href="/expenses/{{ expense['id'] }}">{{ expense["description"] }}</a></td>
+            <td>{{ expense["vendor_name"] }}</td>
+            <td>{{ expense["creator_name"] }}</td>
+            <td class="muted">{{ expense["created_at"][:10] }}</td>
+            <td class="right">&#8377;{{ expense["total"]|rupees }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% else %}
+<div class="card empty">
+    <h2>No expenses yet</h2>
+    <p class="muted">Split your first campus expense with your friends.</p>
+    <a class="button" href="/expenses/new">Split an expense</a>
+</div>
+{% endif %}
+{% endblock %}

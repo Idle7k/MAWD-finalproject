@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Sign in - Campus Split{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+    <h1>Campus Split</h1>
+    <p class="muted">Split campus expenses and pay vendors directly.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <div class="card">
+        <form method="POST" action="/login">
+            <label>
+                Username
+                <input type="text" name="username" value="{{ username }}" required>
+            </label>
+
+            <label>
+                Password
+                <input type="password" name="password" required>
+            </label>
+
+            <button type="submit">Sign in</button>
+        </form>
+    </div>
+
+    <p class="muted center">
+        New here? <a href="/register">Create an account</a>
+    </p>
+
+    <div class="hint">
+        <strong>Demo accounts</strong>
+        <p>Admin: admin / admin123</p>
+        <p>Student: aarav / student123</p>
+    </div>
+</div>
+{% endblock %}
